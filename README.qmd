@@ -9,7 +9,7 @@ format: gfm
 <!-- badges: start -->
 <!-- badges: end -->
 
-Slides and notes for a talk at useR! 2025 (8th - 10th August 2025) in North Carolina, USA.
+Slides and notes for a talk at useR! 2025 (9th August 2025) in North Carolina, USA.
 
 <!-- A recording of this presentation is available on YouTube here: <https://www.youtube.com/watch?v=> -->
 

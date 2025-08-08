@@ -2,48 +2,45 @@
 
 <!-- README.md is generated from README.qmd. Please edit that file -->
 
-# useR! 2024: Statistical computing with vectorised operations on distributions
+# useR! 2025: Visualizing time with ggtime’s grammar of temporal graphics
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
-Slides and notes for a talk at useR! 2024 (8th - 11th July 2024) in
-Salzburg, Austria.
+Slides and notes for a talk at useR! 2025 (9th August 2025) in North
+Carolina, USA.
 
-A recording of this presentation is available on YouTube here:
-<https://www.youtube.com/watch?v=iM_6_tqTBSg>
+<!-- A recording of this presentation is available on YouTube here: <https://www.youtube.com/watch?v=> -->
 
-[![](preview.jpg)](https://www.youtube.com/watch?v=iM_6_tqTBSg)
+<!-- [![](preview.jpg)](https://www.youtube.com/watch?v=) -->
 
 #### Abstract
 
-The uncertainty of model outputs is often absent or hidden in R, and
-tools for interacting with distributions are limited. For example, most
-prediction methods in R only produce point predictions by default.
-Although it is possible to obtain other parameters and form the complete
-distribution, additional knowledge about the distribution’s shape and
-properties are needed. The distributional package vastly simplifies
-creating and interacting with distributions in R.
+While several commonly used plots exist for visualizing time series,
+little work has been done to formalize them into a unified grammar of
+temporal graphics. Re-expressing traditional time series graphics such
+as time plots and seasonal plots with grammatical elements supports
+deeper customization options. Composable grammatical elements provide
+the flexibility needed to easily visualize multiple seasonality, cycles,
+and other complex temporal patterns. These modular elements can be
+composed together to create familiar time series graphics, and also
+recombined to create new informative plots.
 
-The package provides vectorised distributions and supports the
-calculation of various statistics without needing to use shape-specific
-d*/p*/q*/r* functions. Statistics can be easily calculated for
-distributions in the same vector, regardless of shape. Manipulating
-distributions is also supported, including applying transformations,
-inflating values, truncating, and creating mixtures of distributions.
-When vectors are stored as data frame columns, these operations
-integrate seamlessly with tidyverse workflows. Distributions can also be
-visualised with ggplot2 using the ggdist extension package, which offers
-many graphical representations of uncertainty.
+The ggtime package extends the ggplot2 ecosystem with new grammar
+elements and plot helpers for visualising time series data. These
+additions leverage calendar structures to visually align time points
+across different granularities and timezones, warp time to standardize
+irregular durations, and wrap time into compact calendar layouts. In
+this talk, I will introduce ggtime and demonstrate how its grammar of
+temporal graphics enables a flexible visualization of time series
+patterns.
 
 #### Structure
 
-- Examples of current model output
-- Introduction to the basics of distributional
-- Comparison with other libraries, while revealing more advanced
-  functionality
-- Examples of practical applications (calculating on distributions,
-  ggdist plotting)
+- Visual idioms for time series visualisation
+- The grammar of temporal graphics
+- Reconstructing visual idioms with the grammar
 
 ### Format
 

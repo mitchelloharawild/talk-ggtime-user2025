@@ -48,11 +48,19 @@ $slide-height: calc(var(--slide-height) + #{$border-updown-width} * 2);
   margin-bottom:20px;
 }
 
-.sticker-float img {
-  height: 160px;
+img.sticker-float-right {
+  height: 180px;
   position: absolute;
   top: -0.5em;
   right: -1em;
+  z-index: 1;
+}
+img.sticker-float-left {
+  height: 180px;
+  position: absolute;
+  top: -0.5em;
+  left: -1em;
+  z-index: 1;
 }
 
 .box {
@@ -116,16 +124,18 @@ img.icon {
 }
 
 .dateplace {
-  font-size: 35px;
-  margin-left: 0.6em !important;
-  padding-bottom: 1.2em;
+  font-size: 46px;
+  padding-bottom: 0.6em;
 }
 
 .title {
   font-weight: bold;
-  font-size: 65px;
+  font-size: 57px;
   margin-top: -0.5em !important;
-  margin-left: 0.3em !important;
+}
+
+.authors {
+  font-size: 36px;
 }
 
 @keyframes blur {
@@ -186,4 +196,20 @@ span.term {
   height: 2em;
   position: relative;
   top: 1em;
+}
+
+.fragment-remove .fragment.fade-out.visible {
+    display: none;
+    height:0px;
+    line-height: 0px;
+    font-size: 0px;
+}
+
+.callout-body {
+  width: 100%;
+}
+
+details {
+  margin-bottom: 0;
+  font-size: 28px;
 }

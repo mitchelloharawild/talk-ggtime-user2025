@@ -1515,7 +1515,10 @@ The time loop points can be specified with:
 ```{r}
 #| label: loop-timeplot
 tsibbledata::aus_production |>
-  autoplot(Beer)
+  ggplot(aes(x = Quarter, y = Beer, colour = as.Date(Quarter))) + 
+  geom_line() + 
+  scale_color_gradientn(labels = \(x) format(structure(x, class = "Date"), "%Y"), colours = scales::hue_pal()(9)) + 
+  labs(colour = NULL)
 ```
 
 :::
@@ -1535,10 +1538,12 @@ tsibbledata::aus_production |>
 ```{r}
 #| label: loop-vline
 tsibbledata::aus_production |>
-  autoplot(Beer) + 
+  ggplot(aes(x = Quarter, y = Beer, colour = as.Date(Quarter))) + 
   geom_vline(xintercept = as.Date(tsibble::yearquarter("1956 Q1")), colour = "orange") +
   geom_vline(xintercept = as.Date(tsibble::yearquarter("1956 Q1") + (1:54)*4), colour = "deepskyblue") + 
-  geom_line()
+  geom_line() + 
+  scale_color_gradientn(labels = \(x) format(structure(x, class = "Date"), "%Y"), colours = scales::hue_pal()(9)) + 
+  labs(colour = NULL)
 ```
 
 :::{.callout-tip}

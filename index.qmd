@@ -444,7 +444,6 @@ tsibble(
 
 Two types of `ggtime` functions:
 
-::: {.fragment .fade-up}
 ::: {.callout-note icon=false}
 ## :framed_picture: Plot helpers
 
@@ -454,7 +453,6 @@ Functions which are used to quickly create a specific plot.
 * `ggtime::gg_season()`
 * `ggtime::gg_subseries()`
 
-:::
 :::
 
 ::: {.fragment .fade-up}
@@ -588,7 +586,6 @@ Maps time to the x/y-axis.
 They reveal trends, seasons, cycles, outliers, and more.
 
 
-::: {.fragment .fade-up}
 ::: {.callout-note icon=false}
 ## :framed_picture: Plot helper
 
@@ -596,7 +593,6 @@ They reveal trends, seasons, cycles, outliers, and more.
 <tsibble> |>
   autoplot()
 ```
-:::
 :::
 
 ::: {.fragment .fade-up}
@@ -643,7 +639,6 @@ These are simply time plots.
 
 They just happen to show forecasts, or uncertain values.
 
-::: {.fragment .fade-up}
 ::: {.callout-note icon=false}
 ## :framed_picture: Plot helper
 
@@ -651,7 +646,6 @@ They just happen to show forecasts, or uncertain values.
 <fable> |> 
   autoplot(<tsibble>)
 ```
-:::
 :::
 
 ::: {.fragment .fade-up}
@@ -810,7 +804,6 @@ tsibbledata::aus_production |>
 Loops seasons to align years.
 
 
-::: {.fragment .fade-up}
 ::: {.callout-note icon=false}
 ## :framed_picture: Plot helper
 
@@ -818,7 +811,6 @@ Loops seasons to align years.
 <tsibble> |>
   gg_season(period = "year")
 ```
-:::
 :::
 
 ::: {.fragment .fade-up}
@@ -899,7 +891,6 @@ tsibbledata::aus_production |>
 Seasonal facets shows changes in seasons.
 
 
-::: {.fragment .fade-up}
 ::: {.callout-note icon=false}
 ## :framed_picture: Plot helper
 
@@ -907,7 +898,6 @@ Seasonal facets shows changes in seasons.
 <tsibble> |>
   gg_subseries(period = "year")
 ```
-:::
 :::
 
 ::: {.fragment .fade-up}

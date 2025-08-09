@@ -16,6 +16,13 @@ callout-appearance: simple
 
 ## {}
 
+```{r}
+#| label: setup
+#| include: false
+
+library(fpp3)
+```
+
 ::: columns
 ::: {.column width="37.5%"}
 :::
@@ -127,17 +134,29 @@ Scales in ggplot2 handle temporal labels and breaks:
 * `scale_*_datetime()` for `POSIXct`, 
 * `scale_*_time()` for `hms`.
 
-Simply map these to any aesthetic in ggplot2.
+Simply map time to any aesthetic in ggplot2.
 :::
 :::
 
 ::: {.fragment .fade-up fragment-index=2}
 
 ```{r}
-#| label: ggplot-time
-library(ggplot2)
-tsibbledata::aus_production
+#| label: ggplot-setup
+aus_production_tbl <- tsibbledata::aus_production |> 
+  as_tibble() |> 
+  mutate(Quarter = as.Date(Quarter))
 ```
+
+```{r}
+#| label: ggplot-time
+#| echo: true
+#| fig-height: 3
+library(ggplot2)
+aus_production_tbl |>
+  ggplot(aes(x = Quarter, y = Beer)) +
+  geom_line()
+```
+
 :::
 
 :::
@@ -200,6 +219,131 @@ tsibbledata::aus_production
 :::
 
 ![](backgrounds/andrik-langfield-0rTCXZM7Xfo-unsplash.jpg){.image-left}
+
+## {}
+
+::: columns
+::: {.column width="60%"}
+
+### Time series data
+
+Most time series data starts like this:
+
+```{r}
+#| label: tibble-ts
+#| echo: true
+library(tibble)
+readr::read_csv("data/tourism.csv")
+```
+
+:::
+:::
+
+
+![](backgrounds/henry-be-lc7xcWebECc-unsplash.jpg){.image-right}
+
+## {}
+
+::: columns
+::: {.column width="60%"}
+
+### Tidy time series data :broom:
+
+![](media/tsibble.svg){.sticker-float-midright}
+
+A `tsibble` is *tibble* for time series.
+
+```{r}
+#| label: tsibble-data
+#| echo: true
+library(tsibble)
+tourism
+```
+
+:::
+:::
+
+
+![](backgrounds/henry-be-lc7xcWebECc-unsplash.jpg){.image-right}
+
+## {}
+
+::: columns
+::: {.column width="60%"}
+
+### Mixed temporal granularities
+
+::: callout-important
+## Existing time vectors are limited
+
+* Gregorian calendar only
+* Limited granularity options (date, datetime)
+* Cannot mix temporal granularities
+
+:::
+
+::: {.fragment .fade-up fragment-index=1}
+
+![](media/mixtime.svg){.sticker-float-right .fragment .fade-in fragment-index=1}
+
+::: {.callout-tip}
+## A better solution?
+
+The `{mixtime}` package works with:
+
+* Many calendars via `{calcal}`
+
+  <!-- Gregorian, Chinese, Islamic, Hebrew, ... -->
+  
+* Custom calendars / granularities
+
+  <!-- Business hours, trading days, trimesters, ... -->
+  
+* Mixed temporal granularities in the same tsibble
+  
+  <!-- Useful for related series at different frequencies! -->
+
+:::
+:::
+
+
+:::
+:::
+
+![](backgrounds/jon-tyson-FlHdnPO6dlw-unsplash.jpg){.image-right}
+
+
+## {}
+
+::: columns
+::: {.column width="60%"}
+
+### Mixed temporal granularities
+![](media/mixtime.svg){.sticker-float-right}
+
+`mixtime` vectors works nicely in rectangular data structures for ggplot2.
+
+```{r}
+#| label: mixtime
+library(tsibble)
+tsibble(
+  Time = c(mixtime::year(2020:2021), mixtime::new_mixtime(tsibble::yearquarter("2020 Q1") + 0:3), mixtime::new_mixtime(tsibble::yearmonth("2020 Jan") + 0:11)),
+  Region = "Melbourne",
+  State = "Victoria",
+  Purpose = "Holiday",
+  Trips = c(7783.979, 7542.941, 1880.247, 1965.406, 1928.667, 2009.659, 735.4213106, 573.4142064, 571.4114752, 606.9740834, 747.3060511, 
+611.1261341, 662.5029595, 632.0378299, 634.1261913, 581.9617585, 
+621.5359481, 806.1614347),
+  index = Time, key = c(Region, State, Purpose)
+)[c(1,4,2,5,7,9,3,6,8,10:18),]
+```
+
+:::
+:::
+
+![](backgrounds/jon-tyson-FlHdnPO6dlw-unsplash.jpg){.image-right}
+
+
 
 ## {}
 
@@ -361,8 +505,8 @@ They reveal trends, seasons, cycles, outliers, and more.
 ## :framed_picture: Plot helper
 
 ```r
-tsibbledata::aus_production |>
-  autoplot(Beer)
+<tsibble> |>
+  autoplot()
 ```
 :::
 :::
@@ -416,7 +560,7 @@ They just happen to show forecasts, or uncertain values.
 ## :framed_picture: Plot helper
 
 ```r
-<fable> |>
+<fable> |> 
   autoplot(<tsibble>)
 ```
 :::
@@ -441,13 +585,13 @@ They just happen to show forecasts, or uncertain values.
 
 ```{r}
 #| label: forecast-plot
-#| code-fold: true
 #| echo: true
-#| fig-height: 8.5
-pbs_scripts |> 
-  model(ETS(Scripts)) |> 
+#| fig-height: 7
+library(fable)
+tsibbledata::aus_production |> 
+  model(ETS(Beer)) |> 
   forecast() |> 
-  autoplot(pbs_scripts) +
+  autoplot(tsibbledata::aus_production) +
   theme(legend.position = "bottom")
 ```
 
@@ -606,11 +750,10 @@ Loops seasons to align years.
 
 ```{r}
 #| label: season-plot
-#| code-fold: true
 #| echo: true
-#| fig-height: 8.5
-pbs_scripts |>
-  gg_season(Scripts)
+#| fig-height: 7
+tsibbledata::aus_production |>
+  gg_season(Beer, period = "year")
 ```
 
 :::
@@ -697,17 +840,69 @@ Season facets to show changes over time.
 
 ```{r}
 #| label: subseries-plot
-#| code-fold: true
 #| echo: true
-#| fig-height: 8.5
-pbs_scripts |>
-  gg_subseries(Scripts)
+#| fig-height: 7
+tsibbledata::aus_production |>
+  gg_subseries(Beer, period = "year")
 ```
 
 :::
 
 :::
 
+
+
+## {}
+
+::: columns
+
+::: {.column width="40%"}
+
+### Seasonal sub-series
+
+![](media/feasts.svg){.sticker-float-right}
+
+Remove the trend to clearly see seasonal changes.
+
+
+::: {.callout-note icon=false}
+## :framed_picture: Plot helper
+
+```r
+<dcmp> |>
+  gg_subseries(period = "year")
+```
+:::
+
+::: {.callout-tip icon=false}
+## :art: Grammar elements
+
+* mapping: 
+  * x: time
+  * y: observations
+<!-- * coord: cartesian -->
+* **facet: season**
+
+:::
+
+
+:::
+
+::: {.column width="60%"}
+
+```{r}
+#| label: dcmp-subseries-plot
+#| echo: true
+#| fig-height: 7
+tsibbledata::aus_production |>
+  model(STL(Beer)) |>
+  components() |>
+  gg_subseries(season_year, period = "year")
+```
+
+:::
+
+:::
 
 
 ## {}
@@ -808,107 +1003,6 @@ Each of these elements are extensible.
 ![](backgrounds/gglayers-1528209746.png){.image-right}
 
 
-
-## {}
-
-::: columns
-::: {.column width="60%"}
-
-### Data
-
-Data for ggplot2 needs to be rectangular.
-
-Most time series datasets look like this:
-
-```{r}
-library(tsibble)
-library(dplyr)
-as_tibble(tourism) |> 
-  mutate(Quarter = as.Date(Quarter))
-```
-
-
-:::
-:::
-
-![](backgrounds/gglayers-1528209746.png){.image-right}
-
-
-## {}
-
-::: columns
-::: {.column width="60%"}
-
-### Mixed temporal granularities
-
-::: callout-important
-## Existing time vectors are limited
-
-* Gregorian calendar only
-* Limited granularity options (date, datetime)
-* Cannot mix temporal granularities
-
-:::
-
-::: {.fragment .fade-up fragment-index=1}
-::: {.callout-tip}
-## A better solution?
-
-The `{mixtime}` package works with:
-
-* Many calendars via `{calcal}`
-
-  Gregorian, Chinese, Islamic, Hebrew, ...
-  
-* Custom calendars / granularities
-
-  Business hours, trading days, trimesters, ...
-  
-* Mixed temporal granularities in the same tsibble
-  
-  Useful for related series at different frequencies!
-
-:::
-:::
-
-![](resources/mixtime.svg){.sticker-float-right .fragment .fade-in fragment-index=1}
-
-:::
-:::
-
-![](backgrounds/jon-tyson-FlHdnPO6dlw-unsplash.jpg){.image-right}
-
-
-## {}
-
-::: columns
-::: {.column width="60%"}
-
-### Mixed temporal granularities
-
-`mixtime` vectors works nicely in rectangular data structures for ggplot2.
-
-```{r}
-#| label: mixtime
-library(tsibble)
-tsibble(
-  Time = c(mixtime::year(2020:2021), mixtime::new_mixtime(tsibble::yearquarter("2020 Q1") + 0:3), mixtime::new_mixtime(tsibble::yearmonth("2020 Jan") + 0:11)),
-  Region = "Melbourne",
-  State = "Victoria",
-  Purpose = "Holiday",
-  Trips = c(7783.979, 7542.941, 1880.247, 1965.406, 1928.667, 2009.659, 735.4213106, 573.4142064, 571.4114752, 606.9740834, 747.3060511, 
-611.1261341, 662.5029595, 632.0378299, 634.1261913, 581.9617585, 
-621.5359481, 806.1614347),
-  index = Time
-)[c(1,4,2,5,7,9,3,6,8,10:18),]
-```
-
-:::
-:::
-
-![](resources/mixtime.svg){.sticker-float-right}
-
-![](backgrounds/jon-tyson-FlHdnPO6dlw-unsplash.jpg){.image-right}
 
 
 ## {.fragment-remove .dense-list}
@@ -1395,9 +1489,10 @@ The time loop points can be specified with:
 
 ### Looping circular time periods
 
+
 ```{r}
-pbs_scripts |>
-  gg_season(Scripts)
+tsibbledata::aus_production |>
+  gg_season(Beer)
 ```
 
 :::{.callout-tip}
@@ -1424,8 +1519,8 @@ Looping the x-axis over seasonal granularities (e.g. day, week, or year) clearly
 ### Looping circular time periods
 
 ```{r}
-pbs_scripts |>
-  gg_season(Scripts, polar = TRUE)
+tsibbledata::aus_production |>
+  gg_season(Beer, polar = TRUE)
 ```
 
 :::{.callout-tip}

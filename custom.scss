@@ -48,6 +48,15 @@ $slide-height: calc(var(--slide-height) + #{$border-updown-width} * 2);
   margin-bottom:20px;
 }
 
+
+img.sticker-float-midright {
+  height: 180px;
+  position: absolute;
+  top: -0.5em;
+  right: 12em;
+  z-index: 1;
+}
+
 img.sticker-float-right {
   height: 180px;
   position: absolute;

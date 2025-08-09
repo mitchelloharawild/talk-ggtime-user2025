@@ -21,6 +21,7 @@ callout-appearance: simple
 #| include: false
 
 library(fpp3)
+options(width = 60)
 ```
 
 ::: columns
@@ -178,9 +179,11 @@ aus_production_tbl |>
 ::: {.callout-note icon=false}
 ## :calendar: Calendrical time
 
-**Calendrical patterns are complex**!
+**Calendrical patterns are complex**! Complexity causes errors!
 
 <!-- Temporal data/patterns align with calendars. -->
+
+<!-- This complexity makes mistakes common. -->
 
 :::{.incremental}
 
@@ -193,8 +196,6 @@ aus_production_tbl |>
 :::
 :::
 :::
-
-
 
 ::: {.fragment .fade-up style="text-align:center;"}
 <span>
@@ -266,18 +267,19 @@ tourism
 
 ![](backgrounds/henry-be-lc7xcWebECc-unsplash.jpg){.image-right}
 
-## {}
+## {.fragment-remove}
 
 ::: columns
 ::: {.column width="60%"}
 
-### Mixed temporal granularities
+### Mixed temporal vectors
 
-::: callout-important
-## Existing time vectors are limited
+::: {.fragment .fade-out fragment-index=2}
+
+Existing time vectors are limited
 
 * Gregorian calendar only
-* Limited granularity options (date, datetime)
+* Limited granularity options
 * Cannot mix temporal granularities
 
 :::
@@ -291,7 +293,7 @@ tourism
 
 The `{mixtime}` package works with:
 
-* Many calendars via `{calcal}`
+* Any temporal classes
 
   <!-- Gregorian, Chinese, Islamic, Hebrew, ... -->
   
@@ -306,6 +308,20 @@ The `{mixtime}` package works with:
 :::
 :::
 
+::: {.fragment .fade-up fragment-index=2}
+
+```{r}
+#| label: mixtime-demo
+#| echo: true
+library(mixtime)
+now <- Sys.time()
+today <- Sys.Date()
+c(
+  year(now), yearquarter(now), yearmonth(now), 
+  yearweek(now), today, now
+)
+```
+:::
 
 :::
 :::
@@ -313,21 +329,76 @@ The `{mixtime}` package works with:
 ![](backgrounds/jon-tyson-FlHdnPO6dlw-unsplash.jpg){.image-right}
 
 
+## {.fragment-remove}
+
+::: columns
+::: {.column width="60%"}
+
+### Mixed temporal vectors
+
+![](media/calcal.svg){.sticker-float-midright}
+
+::: {.callout-tip}
+## Alternative calendars
+
+Non-Gregorian calendars from `{calcal}` also work.
+:::
+
+
+```{r}
+#| cache: false
+library(calcal)
+library(mixtime)
+year <- lubridate::year
+options(width = 60)
+```
+
+```{r}
+#| label: calcal-demo
+#| echo: true
+#| cache: false
+library(calcal)
+mixtime(
+  as_gregorian(today), as_islamic(today), as_hebrew(today),
+  as_chinese(today), as_coptic(today), as_mayan(today),
+  as_persian(today), as_julian(today), as_egyptian(today)
+)
+```
+
+:::
+:::
+
+![](backgrounds/jon-tyson-FlHdnPO6dlw-unsplash.jpg){.image-right}
+
 ## {}
 
 ::: columns
 ::: {.column width="60%"}
 
-### Mixed temporal granularities
-![](media/mixtime.svg){.sticker-float-right}
+### Mixed temporal vectors
+![](media/mixtime.svg){.sticker-float-midright}
 
-`mixtime` vectors works nicely in rectangular data structures for ggplot2.
+Temporal aggregation in `tsibble`.
+
+```{r}
+#| label: mixtime-echo
+#| echo: true
+#| eval: false
+
+library(mixtime)
+tsibble(
+  Time = c(year(2020:2021), yearquarter("2020 Q1") + 0:3, yearmonth("2020 Jan") + 0:11),
+  Region = "Melbourne", State = "Victoria", Purpose = "Holiday",
+  Trips = ..., # Omitted for brevity
+  index = Time, key = c(Region, State, Purpose)
+)
+```
 
 ```{r}
 #| label: mixtime
-library(tsibble)
+library(mixtime)
 tsibble(
-  Time = c(mixtime::year(2020:2021), mixtime::new_mixtime(tsibble::yearquarter("2020 Q1") + 0:3), mixtime::new_mixtime(tsibble::yearmonth("2020 Jan") + 0:11)),
+  Time = c(mixtime::year(2020:2021), mixtime::yearquarter("2020 Q1") + 0:3, mixtime::yearmonth("2020 Jan") + 0:11),
   Region = "Melbourne",
   State = "Victoria",
   Purpose = "Holiday",
@@ -343,7 +414,22 @@ tsibble(
 
 ![](backgrounds/jon-tyson-FlHdnPO6dlw-unsplash.jpg){.image-right}
 
+## {}
 
+
+
+::: {style="text-align: center;"}
+![](media/xkcd-datetime.png){width="800px"}
+:::
+
+::: {.fragment .fade-up}
+::: {.callout-important}
+
+## Disclaimer: active development
+
+`{mixtime}` and `{ggtime}` require more *time* to mature before general use.
+:::
+:::
 
 ## {}
 
@@ -441,13 +527,18 @@ Grammar extensions are about **how** something is plotted.
 
 ::: {.column width="60%"}
 
-### Common temporal graphics
+### Plot helpers for time series
 
-These 'visual idioms' of time series plots can be categorised into two core groups:
+`{ggtime}` has two main types of plot helpers:
 
 * **Linear time plots**
+
+  * `autoplot()`
+
 * **Circular time plots**
 
+  * `gg_season()`
+  * `gg_subseries()`
 
 ::: {.callout-tip}
 
@@ -457,9 +548,6 @@ Linear time plots show time **continuously** on the `x`/`y` axis.
 
 Circular time plots **loop time** over specific calendar units.
 
----
-
-These plot styles highlight different patterns in the data.
 :::
 
 :::
@@ -567,6 +655,8 @@ They just happen to show forecasts, or uncertain values.
 :::
 
 ::: {.fragment .fade-up}
+![](media/ggdist.svg){.sticker-float-right}
+
 ::: {.callout-tip icon=false}
 ## :art: Grammar elements
 
@@ -806,7 +896,7 @@ tsibbledata::aus_production |>
 
 ### Seasonal sub-series
 
-Season facets to show changes over time.
+Seasonal facets shows changes in seasons.
 
 
 ::: {.fragment .fade-up}
@@ -904,105 +994,33 @@ tsibbledata::aus_production |>
 
 :::
 
-
 ## {}
 
 ::: columns
 
 ::: {.column width="40%"}
 :::
-::: {.column width="60%"}
-
-### Grammar of temporal graphics
-
-`{ggtime}` re-expresses these common plots with a composable ggplot2-like grammar.
-
-::: {.callout-tip icon=false}
-## :dart: Goals
-
-* Decompose temporal graphics into modular elements.
-* Provide grammar extensions, and plot helpers using them.
-* Encourage users to experiment beyond standard plots.
-* Interoperability with other ggplot2 extensions (e.g. ggdist)
-* Overcome current limitations of time series graphics.
-
-:::
-
-
-<!-- ::: {.callout-important icon=false} -->
-<!-- ## :stop_sign: Current problems of ggplot for time series -->
-
-<!-- * Aligning mixed granularities -->
-
-<!-- ::: -->
-
-
-:::
-:::
-
-![](backgrounds/chris-lee-70l1tDAI6rM-unsplash.jpg){.image-left}
-
-
-## {.fragment-remove}
-
-::: columns
 
 ::: {.column width="60%"}
 
-::: {.fragment .fade-out fragment-index=1}
-### Elements of ggplot2's grammar
+### Grammar extensions
 
-The ggplot2 grammar of graphics identifies **compositional elements** involved in plotting.
+`{ggtime}` decomposes these plot helpers into grammatical elements for `{ggplot2}`.
 
-Each of these elements are extensible.
-:::
+::: {.callout-tip}
 
-::: {.fragment .fade-up fragment-index=1}
-| Element      | Description                        |
-|--------------|-------------------------------------|
-| Data         | The original data to plot           |
-| Aesthetics   | Map graphical dimensions            |
-| Geometries   | Graphical objects to plot           |
-| Scales       | Transform data to visuals           |
-| Positions    | Adjust placement of values          |
-| Statistics   | Data summary statistics             |
-| Facets       | Split plots into subplots           |
-| Coordinates  | Plotting reference system           |
-| Guides       | Explain aesthetic mappings          |
-| Themes       | Non-data visual style               |
+## Composable grammars
+
+* Combine elements to create new plots.
+* Customise the style and structure.
+* Works well with other ggplot extensions.
 
 :::
 
 :::
 :::
 
-![](backgrounds/gglayers-1528209746.png){.image-right}
-
-## {.fragment-remove}
-
-::: columns
-
-::: {.column width="63%"}
-
-| Element        | Description                        |
-|----------------|-------------------------------------|
-| **Data**         | The original data to plot           |
-| **Aesthetics**   | Map graphical dimensions            |
-| **Geometries**   | Graphical objects to plot           |
-| **Scales**       | Transform data to visuals           |
-| **Positions**    | Adjust placement of values          |
-| ***Statistics*** *   | Data summary statistics             |
-| **Facets**       | Split plots into subplots           |
-| ***Coordinates*** *  | Plotting reference system           |
-| ***Guides*** *       | Explain aesthetic mappings          |
-| Themes         | Non-data visual style               |
-
-:::
-:::
-
-![](backgrounds/gglayers-1528209746.png){.image-right}
-
-
+![](backgrounds/nathan-dumlao-5Hl5reICevY-unsplash.jpg){.image-left}
 
 
 ## {.fragment-remove .dense-list}
@@ -1012,7 +1030,6 @@ Each of these elements are extensible.
   margin-bottom: 0 !important;
 }
 ```
-
 
 ::: columns
 
@@ -1193,10 +1210,11 @@ The mixtime scales support temporal labels and breaks, much like ggplot2:
 
 ::: {.fragment .fade-up}
 
-These scales also handle the alignment of:
+These scales also have alignment options:
 
-* granularities (`time_align` 0-1)
-* cycles (`warp` and `time_warp`)
+* `time_align` (numeric, 0-1)
+* `time_warp` (duration, e.g. `"1 month"`)
+  `warp` (times, e.g. `2025-01-28`)
 
 :::
 
@@ -1224,7 +1242,7 @@ Imagine Australian births (annual) compared with total births by state (monthly)
 
 ```{r}
 recent_births <- aus_births |> 
-  filter(Month >= yearmonth("2010 Jan"))
+  filter(Month >= yearmonth("2016 Jan"))
 
 aus_total_births <- recent_births |> 
   index_by(year = year(Month)) |> 
@@ -1234,7 +1252,8 @@ recent_births |>
   summarise(Births = sum(Births)) |> 
   ggplot(aes(x = Month, y = Births)) + 
   geom_line() + 
-  geom_line(aes(x = make_date(year = year), y = Births / 12), data = aus_total_births, colour = "steelblue")
+  geom_line(aes(x = make_date(year = year), y = Births / 12), data = aus_total_births, colour = "steelblue", linewidth = 1.5) +
+  geom_point(aes(x = make_date(year = year), y = Births / 12), data = aus_total_births, colour = "darkblue", size = 5)
 ```
 
 ::: {.fragment .fade-up fragment-index=1}
@@ -1270,7 +1289,7 @@ Consequently, plotting is also often left-aligned.
 
 ```{r}
 recent_births <- aus_births |> 
-  filter(Month >= yearmonth("2010 Jan"))
+  filter(Month >= yearmonth("2016 Jan"))
 
 aus_total_births <- recent_births |> 
   index_by(year = year(Month)) |> 
@@ -1280,7 +1299,8 @@ recent_births |>
   summarise(Births = sum(Births)) |> 
   ggplot(aes(x = Month, y = Births)) + 
   geom_line() + 
-  geom_line(aes(x = make_date(year = year, month = 6), y = Births / 12), data = aus_total_births, colour = "darkgreen")
+  geom_line(aes(x = make_date(year = year, month = 6), y = Births / 12), data = aus_total_births, colour = "forestgreen", linewidth = 1.5) +
+  geom_point(aes(x = make_date(year = year, month = 6), y = Births / 12), data = aus_total_births, colour = "darkgreen", size = 5)
 ```
 
 ::: {.callout-note icon=false}
@@ -1320,11 +1340,18 @@ time <- make_date(year = 2025) + 0:364
 # y <- rnorm(length(month_progress), mean = month_progress^4, sd = month_progress*0.1)
 y <- sin(month_progress*2*pi) + rnorm(365, sd = 0.1)
 
-tibble(time, y, month_progress) |> 
+
+tbl_ragged <- tibble(time, y, month_progress)
+tbl_ragged |> 
   ggplot(aes(x = time - floor_date(time, "month"), y = y, group = month(time))) + 
-  geom_line(aes()) +
+  geom_line() +
+  geom_point(
+    data = tbl_ragged |> group_by(yearmonth(time)) |> filter(time %in% range(time)),
+    size = 3
+  ) + 
   facet_grid(rows = vars(month(time, label = TRUE))) + 
   labs(x = "Day of month")
+
 ```
 :::
 
@@ -1341,10 +1368,15 @@ time <- make_date(year = 2025) + 0:364
 # y <- rnorm(length(month_progress), mean = month_progress^4, sd = month_progress*0.1)
 y <- sin(month_progress*2*pi) + rnorm(365, sd = 0.1)
 
-tibble(time, y, month_progress) |> 
+tbl_justified <- tibble(time, y, month_progress)
+tbl_justified |> 
   ggplot(aes(x = month_progress, y = y, group = month(time))) + 
   scale_x_continuous(labels = scales::percent) +
-  geom_line(aes()) +
+  geom_line() +
+  geom_point(
+    data = tbl_justified|> group_by(yearmonth(time)) |> filter(time %in% range(time)), 
+    size = 3
+  ) +
   facet_grid(rows = vars(month(time, label = TRUE))) + 
   labs(x = "Percentage of month")
 ```
@@ -1491,6 +1523,59 @@ The time loop points can be specified with:
 
 
 ```{r}
+#| label: loop-timeplot
+tsibbledata::aus_production |>
+  autoplot(Beer)
+```
+
+:::
+:::
+
+![](backgrounds/gglayers-1528209746.png){.image-right}
+
+## {.fragment-remove}
+
+::: columns
+
+::: {.column width="60%"}
+
+### Looping circular time periods
+
+
+```{r}
+#| label: loop-vline
+tsibbledata::aus_production |>
+  autoplot(Beer) + 
+  geom_vline(xintercept = as.Date(tsibble::yearquarter("1956 Q1")), colour = "orange") +
+  geom_vline(xintercept = as.Date(tsibble::yearquarter("1956 Q1") + (1:54)*4), colour = "deepskyblue") + 
+  geom_line()
+```
+
+:::{.callout-tip}
+## Looping continuous time
+
+Looping the x-axis over seasonal granularities (e.g. day, week, or year) clearly shows seasonality.
+
+`coord_time_loop(time_loops = "1 year")`
+
+:::
+
+:::
+:::
+
+![](backgrounds/gglayers-1528209746.png){.image-right}
+
+## {.fragment-remove}
+
+::: columns
+
+::: {.column width="60%"}
+
+### Looping circular time periods
+
+
+```{r}
+#| loop: loop-season
 tsibbledata::aus_production |>
   gg_season(Beer)
 ```
@@ -1545,14 +1630,16 @@ Looping conceptually applies to other coordinate spaces too. Combining `coord_lo
 ::: {.callout-tip}
 ## Closing remarks 
 
-Become a ggplot2 extender!
+* Stay tuned! Follow the progress on GitHub.
+* Combine semantic variables together with tibble.
 
-* Start with making plot helpers using ggplot2
-* Create a new branded `theme` for your organisation
-* Extend the grammar with a new `Geom` and `Stat`
-* See how others have written ggplot extensions
-
-  (there's plenty of examples out there!)
+  ```r
+  tibble(
+    time = <mixtime>,
+    geometry = <sf>,
+    prediction = <distributional>
+  )
+  ```
 
 :::
 

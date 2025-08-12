@@ -419,6 +419,8 @@ tsibble(
 
 
 ::: {style="text-align: center;"}
+[<https://xkcd.com/2867/>]{style="position: absolute; top: 10%; left: 0; font-size: 0.9em;"}
+
 ![](media/xkcd-datetime.png){width="800px"}
 :::
 

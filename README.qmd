@@ -11,9 +11,9 @@ format: gfm
 
 Slides and notes for a talk at useR! 2025 (9th August 2025) in North Carolina, USA.
 
-<!-- A recording of this presentation is available on YouTube here: <https://www.youtube.com/watch?v=> -->
+A recording of this presentation is available on YouTube here: <https://www.youtube.com/watch?v=OvitQNBCtks>
 
-<!-- [![](preview.jpg)](https://www.youtube.com/watch?v=) -->
+[![](preview.png)](https://www.youtube.com/watch?v=OvitQNBCtks)
 
 #### Abstract
 
